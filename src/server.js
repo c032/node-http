@@ -90,7 +90,7 @@ export class Response {
 
     json(body) {
         const buffer = Buffer.from(
-            JSON.stringify(body, null, 4),
+            JSON.stringify(body, null, 4) + '\n',
             'utf8'
         );
 
