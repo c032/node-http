@@ -5,7 +5,7 @@ function nopHandler(ctx, next) {
     return;
 }
 
-export class Request {
+class Request {
     constructor(rawRequest) {
         this.raw = rawRequest;
     }
@@ -40,7 +40,7 @@ function formatHeaderKey(key) {
     return formattedKey;
 }
 
-export class Response {
+class Response {
     constructor(raw) {
         this.raw = raw;
 
