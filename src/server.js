@@ -87,6 +87,18 @@ export class Response {
 
         this.headers[key] = value;
     }
+
+    json(body) {
+        const buffer = Buffer.from(
+            JSON.stringify(body, null, 4),
+            'utf8'
+        );
+
+        this.body = buffer;
+
+        this.setHeader('Content-Type', 'application/json; charset=UTF-8');
+        this.setHeader('Content-Length', buffer.length);
+    }
 }
 
 export class Server {

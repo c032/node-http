@@ -1,14 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-function serveJson(ctx, statusCode, body) {
-    ctx.response.status = statusCode;
-    ctx.response.setHeader('Content-Type', 'application/json; charset=UTF-8');
-    ctx.response.body = JSON.stringify(body, null, 4) + '\n';
-    ctx.response.body = Buffer.from(ctx.response.body, 'utf8');
-    ctx.response.setHeader('Content-Length', ctx.response.body.length);
-}
-
 function serveFile(ctx, filePath) {
     ctx.response.status = 200;
 
@@ -68,7 +60,7 @@ async function serveDirectory(ctx, directoryPath) {
 
     responseBody.entries.sort((a, b) => a.name.localeCompare(b.name));
 
-    return serveJson(ctx, 200, responseBody);
+    ctx.response.json(responseBody);
 }
 
 export function staticFileHandler(root) {
@@ -104,9 +96,10 @@ export function staticFileHandler(root) {
 }
 
 export async function notFoundHandler(ctx) {
-    return serveJson(ctx, 404, {
+    ctx.response.status = 404;
+    ctx.response.json({
         error: {
-            message: 'Not found.'
+            message: 'Not found.',
         },
     });
 }
@@ -117,7 +110,8 @@ export async function errorWrapperHandler(ctx, next) {
     } catch (err) {
         console.error(err.stack);
 
-        return serveJson(ctx, 500, {
+        ctx.response.status = 500;
+        ctx.response.json({
             error: {
                 message: 'Internal server error.',
                 debug: {
