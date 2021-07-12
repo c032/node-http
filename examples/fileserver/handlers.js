@@ -63,6 +63,31 @@ async function serveDirectory(ctx, directoryPath) {
     ctx.response.json(responseBody);
 }
 
+export async function requestLoggerHandler(ctx, next) {
+    const start = Date.now();
+    const startTimestamp = JSON.parse(
+        JSON.stringify(new Date(start))
+    );
+
+    const {
+        method,
+        path,
+    } = ctx.request;
+
+    console.log(`--> ${startTimestamp} ${method} ${path}`);
+
+    await next();
+
+    const end = Date.now();
+    const endTimestamp = JSON.parse(
+        JSON.stringify(new Date(end))
+    );
+
+    const diff = end - start;
+
+    console.log(`<-- ${endTimestamp} ${method} ${path} (${diff}ms)`);
+}
+
 export function staticFileHandler(root) {
     return async function staticFileHandler(ctx, next) {
         const { request } = ctx;

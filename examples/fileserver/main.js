@@ -9,6 +9,7 @@ import { Server } from '../../src/server.js';
 import {
     errorWrapperHandler,
     notFoundHandler,
+    requestLoggerHandler,
     staticFileHandler,
 } from './handlers.js';
 
@@ -16,6 +17,7 @@ function main() {
     const root = path.join(__dirname, '..');
     const s = new Server();
 
+    s.pushHandler(requestLoggerHandler);
     s.pushHandler(errorWrapperHandler);
     s.pushHandler(staticFileHandler(root));
     s.pushHandler(notFoundHandler);
