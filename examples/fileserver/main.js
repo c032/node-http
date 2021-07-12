@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-import { Server } from '../../server.js';
+import { Server } from '../../src/server.js';
 
 import {
     errorWrapperHandler,
