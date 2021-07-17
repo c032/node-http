@@ -1,0 +1,38 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist",
+
+		"downlevelIteration": true,
+		"incremental": true,
+		"module": "commonjs",
+		"alwaysStrict": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strict": true,
+		"strictBindCallApply": true,
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noPropertyAccessFromIndexSignature": false,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"assumeChangesOnlyAffectDirectDependencies": false,
+		"emitBOM": false,
+		"forceConsistentCasingInFileNames": true,
+		"importsNotUsedAsValues": "remove",
+		"jsx": "react",
+		"jsxFactory": "m",
+		"newLine": "LF",
+		"resolveJsonModule": false,
+		"target": "es5"
+	}
+}

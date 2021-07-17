@@ -1,7 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-function serveFile(ctx, filePath) {
+import {
+	IContext,
+	IHandler,
+	INextFunction,
+} from '../../server';
+
+function serveFile(ctx: IContext, filePath: string): void {
     ctx.response.status = 200;
 
     // TODO: Guess file type from extension.
@@ -10,14 +16,20 @@ function serveFile(ctx, filePath) {
     ctx.response.body = fs.createReadStream(filePath);
 }
 
-async function serveDirectory(ctx, directoryPath) {
+async function serveDirectory(ctx: IContext, directoryPath: string): Promise<void> {
     let requestPath = ctx.request.path;
     if (!requestPath.endsWith('/')) {
         requestPath += '/';
     }
 
+	interface IEntry {
+		type: string;
+		name: string;
+		absolutePath: string;
+	}
+
     const responseBody = {
-        entries: [],
+        entries: [] as IEntry[],
     };
 
     const rawEntries = await fs.promises.readdir(directoryPath, {
@@ -49,7 +61,7 @@ async function serveDirectory(ctx, directoryPath) {
             urlPath += '/';
         }
 
-        const entry = {
+        const entry: IEntry = {
             type,
             name,
             absolutePath: urlPath,
@@ -63,7 +75,7 @@ async function serveDirectory(ctx, directoryPath) {
     ctx.response.json(responseBody);
 }
 
-export async function requestLoggerHandler(ctx, next) {
+export async function requestLoggerHandler(ctx: IContext, next: INextFunction): Promise<void> {
     const start = Date.now();
     const startTimestamp = JSON.parse(
         JSON.stringify(new Date(start))
@@ -88,8 +100,8 @@ export async function requestLoggerHandler(ctx, next) {
     console.log(`<-- ${endTimestamp} ${method} ${path} (${diff}ms)`);
 }
 
-export function staticFileHandler(root) {
-    return async function staticFileHandler(ctx, next) {
+export function staticFileHandler(root: string): IHandler {
+    return async function staticFileHandler(ctx: IContext, next: INextFunction) {
         const { request } = ctx;
         const urlPath = request.path;
 
@@ -120,7 +132,7 @@ export function staticFileHandler(root) {
     };
 }
 
-export async function notFoundHandler(ctx) {
+export async function notFoundHandler(ctx: IContext): Promise<void> {
     ctx.response.status = 404;
     ctx.response.json({
         error: {
@@ -129,7 +141,7 @@ export async function notFoundHandler(ctx) {
     });
 }
 
-export async function errorWrapperHandler(ctx, next) {
+export async function errorWrapperHandler(ctx: IContext, next: INextFunction): Promise<void> {
     try {
         await next();
     } catch (err) {

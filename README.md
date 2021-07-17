@@ -1,6 +1,6 @@
 # node-http
 
-Experimenting with making an HTTP server without external dependencies.
+Throwaway HTTP server without runtime dependencies.
 
 ## License
 
