@@ -24,7 +24,7 @@ class Request {
     }
 
     get headers() {
-        this.raw.headers;
+        return this.raw.headers;
     }
 }
 
