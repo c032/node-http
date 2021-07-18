@@ -7,7 +7,7 @@ import {
     notFoundHandler,
     requestLoggerHandler,
     staticFileHandler,
-} from './handlers.js';
+} from './handlers';
 
 function main() {
     const root = path.join(__dirname, '..');
