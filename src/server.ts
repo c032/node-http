@@ -13,11 +13,11 @@ class Request {
 		this.raw = rawRequest;
 	}
 
-	get method() {
+	public get method() {
 		return this.raw.method;
 	}
 
-	get path() {
+	public get path() {
 		const { url } = this.raw;
 		if (!url) {
 			throw new Error('Missing `url` property');
@@ -33,7 +33,7 @@ class Request {
 		return parsedUrl.pathname;
 	}
 
-	get headers() {
+	public get headers() {
 		return this.raw.headers;
 	}
 }
@@ -63,7 +63,7 @@ class Response {
 		this.raw = raw;
 	}
 
-	getHeaders(): IHeaders {
+	public getHeaders(): IHeaders {
 		return Object.keys(this.headers)
 			.map((key: string) => ({
 				key: formatHeaderKey(key),
@@ -76,7 +76,7 @@ class Response {
 			}), {});
 	}
 
-	getHeader(key: string): string|null {
+	public getHeader(key: string): string|null {
 		const searchKey = key.toLowerCase();
 
 		const keys = Object.keys(this.headers);
@@ -100,7 +100,7 @@ class Response {
 		return null;
 	}
 
-	setHeader(key: string, value: string): void {
+	public setHeader(key: string, value: string): void {
 		const searchKey = key.toLowerCase();
 
 		const keys = Object.keys(this.headers);
@@ -121,7 +121,7 @@ class Response {
 		this.headers[key] = value;
 	}
 
-	json(body: any) {
+	public json(body: any) {
 		const jsonStr = JSON.stringify(body, null, 4);
 
 		const buffer = Buffer.from(
@@ -162,8 +162,22 @@ export class Server {
 
 	private handlers: IHandler[] = [];
 
-	pushHandler(handler: IHandler): void {
+	public pushHandler(handler: IHandler): void {
 		this.handlers.push(handler);
+
+		return;
+	}
+
+	public listen(...args: any[]): void {
+		if (this.server !== null) {
+			throw new Error('already listening');
+		}
+
+		const handler: http.RequestListener = this.getHttpHandler();
+
+		this.server = http.createServer(handler);
+
+		this.server.listen(...args);
 
 		return;
 	}
@@ -188,7 +202,7 @@ export class Server {
 		};
 	}
 
-	getHttpHandler(): http.RequestListener {
+	private getHttpHandler(): http.RequestListener {
 		return (req: http.IncomingMessage, res: http.ServerResponse) => {
 			const ctx: IContext = {
 				request: new Request(req),
@@ -221,19 +235,5 @@ export class Server {
 				res.end();
 			});
 		};
-	}
-
-	listen(...args: any[]): void {
-		if (this.server !== null) {
-			throw new Error('already listening');
-		}
-
-		const handler: http.RequestListener = this.getHttpHandler();
-
-		this.server = http.createServer(handler);
-
-		this.server.listen(...args);
-
-		return;
 	}
 }
