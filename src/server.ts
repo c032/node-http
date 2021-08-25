@@ -2,6 +2,11 @@ import * as http from 'http';
 import * as stream from 'stream';
 import { Buffer } from 'buffer';
 
+import {
+	DEFAULT_LOGGER,
+	ILogger,
+} from './logger';
+
 export interface IHeaders {
 	[key: string]: string|undefined;
 }
@@ -157,10 +162,26 @@ interface IInternalHandler {
 	(ctx: IContext): Promise<void>
 }
 
+export interface IServerConfig {
+	logger: ILogger;
+}
+
 export class Server {
 	private server: http.Server | null = null;
 
 	private handlers: IHandler[] = [];
+
+	private readonly config: IServerConfig;
+
+	constructor(config?: IServerConfig) {
+		if (config) {
+			this.config = config;
+		} else {
+			this.config = {
+				logger: DEFAULT_LOGGER,
+			};
+		}
+	}
 
 	public pushHandler(handler: IHandler): void {
 		this.handlers.push(handler);
@@ -180,6 +201,10 @@ export class Server {
 		this.server.listen(...args);
 
 		return;
+	}
+
+	private get logger(): ILogger {
+		return this.config.logger;
 	}
 
 	private getInternalHandler(i = 0): IInternalHandler {
@@ -228,8 +253,7 @@ export class Server {
 					res.end(body);
 				}
 			}).catch((err) => {
-				// eslint-disable-next-line no-console
-				console.error(err.stack);
+				this.logger.print(err.message, err);
 
 				res.writeHead(500);
 				res.end();
